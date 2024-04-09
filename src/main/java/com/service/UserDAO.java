@@ -10,6 +10,12 @@ public class UserDAO {
 
     // Metodo per creare un utente
     public void createUser(User user) {
+        String temp_email = user.getEmail();
+        if (IsEmailPresent(temp_email)) {
+            System.out.println("Email già presente");
+            return;
+        }
+        
         String query = "INSERT INTO Utente (nome, cognome, email, password, data_di_registrazione) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -40,7 +46,20 @@ public void printAllUsers() {
         e.printStackTrace();
     }
 }
-
+    public boolean IsEmailPresent(String email) {
+        String query = "SELECT * FROM Utente WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    return false;
+}
 
     // Metodo per leggere un utente
     public User readUser(int userId) {
@@ -63,6 +82,8 @@ public void printAllUsers() {
         }
         return null; // Nessun utente trovato
     }
+
+
 
     // Metodo per aggiornare un utente
     public void updateUser(User user) {
