@@ -1,12 +1,12 @@
-package com;
+package com.service;
 import com.models.User;
 import java.sql.*;
 import java.time.LocalDate;
 
 public class UserDAO {
-    private String url = "jdbc:postgresql://<indirizzo_host>/<nome_database>";
-    private String user = "<username_db>";
-    private String password = "<password_db>";
+    private String url = "jdbc:postgresql://localhost:5432/user_crud";
+    private String user = "postgres";
+    private String password = "password";
 
     // Metodo per creare un utente
     public void createUser(User user) {
@@ -23,6 +23,24 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
+
+    // Nella classe UserDAO
+
+public void printAllUsers() {
+    String query = "SELECT * FROM Utente";
+    try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(query)) {
+        while (rs.next()) {
+            System.out.println("ID: " + rs.getInt("id") + ", Nome: " + rs.getString("nome") + 
+                ", Cognome: " + rs.getString("cognome") + ", Email: " + rs.getString("email") +
+                ", Data di Registrazione: " + rs.getDate("data_di_registrazione").toLocalDate());
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 
     // Metodo per leggere un utente
     public User readUser(int userId) {
